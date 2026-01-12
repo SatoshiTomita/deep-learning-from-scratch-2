@@ -81,6 +81,35 @@ def most_similar(query,word_to_id,id_to_word,word_matrix,top=5):
             return
 
 
+# 共起行列をPPMI行列に変換する関数
+def ppmi(C,verbose=True,eps=1e-8):
+    # ppmi行列をCと同じ形でゼロで初期化
+    M=np.zeros_like(C,dtype=np.float32)
+    # 共起行列の全要素の合計
+    N=np.sum(C)
+    # 各列の合計
+    # 単語の出現する回数
+    S=np.sum(C,axis=0)
+    total=C.shape[0]*C.shape[1]
+    cnt=0
+
+    for i in range(C.shape[0]):
+        for j in range(C.shape[1]):
+            pmi=np.log2(C[i,j]*N/(S[j]*S[i])+eps)
+            # i行j列についてpmi行列を作成
+            M[i,j]=max(0,pmi)
+            # verboseがtrueだったら進捗を表示させる
+            if verbose:
+                cnt+=1
+                if cnt%(total//100+1)==0:
+                 print('%lf%%done'%(100*cnt/total))
+    return M
+
+
+
+
+
+
 
 
 
