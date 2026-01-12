@@ -17,3 +17,30 @@ def preprocess(text):
 
     corpus=np.array([word_to_id[w] for w in words])
     return corpus,word_to_id,id_to_word
+
+# corpusを単語IDのリスト(corpus=[0,1,2,3]など)、vocab_sizeを語彙数、window_sizeをウィンドウサイズ
+def create_co_matrix(corpus,vocab_size,window_size):
+    corpus_size=len(corpus)
+    # 単語×単語の表
+    # ゼロを入れて初期化
+    co_matrix=np.zeros((vocab_size,vocab_size),dtype=np.int32)
+
+    # enumerateでidとword_idを取り出している
+    for idx,word_id in enumerate(corpus):
+        # 左にi個、右にi個
+        for i in range(1,window_size+1):
+            # 左側の単語
+            left_idx=idx-i
+            # 右側の単語
+            right_idx=idx+i
+            # 範囲内ならば、word_id行、left_id_word列を+1する
+            if left_idx>=0:
+                left_word_id=corpus[left_idx]
+                co_matrix[word_id,left_word_id]+=1
+            
+            #右側も同様に処理
+            if right_idx<corpus_size:
+                right_word_id=corpus[right_idx]
+                co_matrix[word_id,right_word_id]+=1
+
+    return co_matrix
