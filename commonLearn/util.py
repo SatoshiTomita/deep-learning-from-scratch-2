@@ -1,0 +1,19 @@
+import numpy as np
+def preprocess(text):
+    text=text.lower()
+    # コンマの前にスペースが必要
+    text=text.replace('.',' .')
+    # スペースで単語を区切って格納する
+    words=text.split(' ')
+
+    word_to_id={}
+    id_to_word={}
+
+    for word in words:
+        if word not in word_to_id:
+            new_id=len(word_to_id)
+            word_to_id[word]=new_id
+            id_to_word=word
+
+    corpus=np.array([word_to_id[w] for w in words])
+    return corpus,word_to_id,id_to_word
