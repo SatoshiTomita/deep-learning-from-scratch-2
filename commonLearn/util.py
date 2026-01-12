@@ -50,3 +50,37 @@ def cos_similarity(x,y,eps=1e-8):
     ny=y/(np.sqrt(np.sum(y**2))+eps)
     return np.dot(nx,ny)
 
+# ある単語がクエリとして与えられたとき、そのクエリに対して類似した単語を上位から順に表示する関数
+def most_similar(query,word_to_id,id_to_word,word_matrix,top=5):
+    if query not in word_to_id:
+        print('%s is not found'%query)
+        return 
+    
+    print('\n[query]'+query)
+    # クエリの単語ベクトルを取り出す
+    query_id=word_to_id[query]
+    query_vec=word_matrix[query_id]
+    vocab_size=len(id_to_word)
+    # vocab_size個の要素をもつ一次元配列
+    similarity=np.zeros(vocab_size)
+    # クエリの単語ベクトルと、他の全ての単語ベクトルについてコサイン類似度を求める
+    for i in range(vocab_size):
+        similarity[i]=cos_similarity(word_matrix[i],query_vec)
+    
+    count=0
+    # argsortは昇順でソートしたインデックスを返す
+    # コサイン類似度の高い順に返したいからマイナスする
+    for i in (-1*similarity).argsort():
+        # クエリ事態はスキップする
+        if id_to_word[i]==query:
+            continue
+        print('%s:%s'%(id_to_word[i],similarity[i]))
+        # top件まで出力する
+        count+=1
+        if count>=top:
+            return
+
+
+
+
+
