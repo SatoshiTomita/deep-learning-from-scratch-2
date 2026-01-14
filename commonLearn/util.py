@@ -1,3 +1,6 @@
+from curses import window
+from importlib.resources import contents
+from multiprocessing import context
 import numpy as np
 def preprocess(text):
     text=text.lower()
@@ -106,7 +109,23 @@ def ppmi(C,verbose=True,eps=1e-8):
     return M
 
 
+# corpusからコンテキストとターゲットを作成する関数
+def create_contexts_target(corpus,window_size=1):
+    # コーパスの両端をのぞいた部分をターゲットとして抽出
+    target=corpus[window_size:-window_size]
+    contexts=[]
 
+    # ターゲット位置を順に処理
+    # idxは現在のターゲット位置
+    for idx in range(window_size,len(corpus)-window_size):
+        cs=[]
+        # ターゲット前後のwindow_sizeこの単語をコンテキストとして収集
+        for t in range(-window_size,window_size+1):
+            if t==0:
+                continue
+            cs.append(corpus[idx+t])
+        contexts.append(cs)
+    return np.array(contexts),np.array(target)
 
 
 
